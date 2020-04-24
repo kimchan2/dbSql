@@ -213,7 +213,31 @@ GROUP BY deptno;
 
 -- grp4
 
-SELECT TO_CHAR(hiredate, 'yyyymm') as HIRE_YYYYMM, COUNT(empno) as CNT
+SELECT TO_CHAR(hiredate, 'yyyymm') as HIRE_YYYYMM, COUNT(*) as CNT
 FROM emp
-GROUP BY TO_CHAR(hiredate, 'yyyymm');
+GROUP BY TO_CHAR(hiredate, 'yyyymm')
+ORDER BY TO_CHAR(hiredate, 'yyyymm') ASC;
+
+-- grp5
+
+SELECT TO_CHAR(hiredate, 'yyyy') as HIRE_YYYYMM, COUNT(*) as CNT
+FROM emp
+GROUP BY TO_CHAR(hiredate, 'yyyy')
+ORDER BY CNT ASC;
+
+-- grp6
+
+SELECT *
+FROM dept;
+
+SELECT COUNT(*) CNT
+FROM dept;
+
+-- grp7
+
+SELECT COUNT(*) as CNT
+FROM
+    (SELECT deptno
+    FROM emp
+    GROUP BY deptno);
 
