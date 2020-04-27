@@ -64,8 +64,8 @@ condition : CASE, DECODE 다 암기
  FROM emp
  GROUP BY deptno;
  
- SELECT deptno, MAX(sal) -- ==> 실행이 안됨, deptno로 그룹을 지정 10, 20, 30 해놨는데 ename을 조회함, 예를들어 deptno 10에는 ename이 3개가 있음
- FROM emp                            -- 그중에 무엇을 조회할지가 정해져있지 않음 MIN(ename), MAX(ename)이런식은 괜찮음
+ SELECT deptno, ename, MAX(sal) ==> 실행이 안됨, deptno로 그룹을 지정 10, 20, 30 해놨는데 ename을 조회함, 예를들어 deptno 10에는 ename이 3개가 있음
+ FROM emp                           그중에 무엇을 조회할지가 정해져있지 않음 MIN(ename), MAX(ename)이런식은 괜찮음
  GROUP BY deptno;
  
  SELECT deptno, ROUND(AVG(sal), 2)as sal_avg,
@@ -240,4 +240,3 @@ FROM
     (SELECT deptno
     FROM emp
     GROUP BY deptno);
-
