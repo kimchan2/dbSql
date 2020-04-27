@@ -146,6 +146,33 @@ ORACLE 조인 문법을 ANSI 문법처럼 세분화 하지 않음
  
  -- 실습 join0.3~4 과제
  
+ --3
+ SELECT empno, ename, sal, emp.deptno, dname
+ FROM emp JOIN dept ON ( emp.deptno = dept.deptno AND sal > 2500 AND empno > 7600 )
+ ORDER BY deptno;
+ 
+ SELECT empno, ename, sal, a.deptno, dname
+ FROM emp a, dept b
+ WHERE a.deptno = b.deptno
+       AND sal > 2500
+       AND empno > 7600
+ ORDER BY deptno;
+ --4
+ SELECT empno, ename, sal, emp.deptno, dname
+ FROM emp JOIN dept ON ( emp.deptno = dept.deptno
+                         AND sal > 2500
+                         AND empno > 7600
+                         AND dname = 'RESEARCH' )
+ ORDER BY empno DESC;
+ 
+ SELECT empno, ename, sal, a.deptno, dname
+ FROM emp a, dept b
+ WHERE a.deptno = b.deptno
+       AND sal > 2500
+       AND empno > 7600
+       AND dname = 'RESEARCH'
+ ORDER BY empno DESC;
+ 
  -- 실습 join1
  
  SELECT lprod_gu, lprod_nm, prod_id, prod_name
