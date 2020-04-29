@@ -37,7 +37,7 @@ WHERE a.job_id = b.job_id;
 SELECT *
 FROM jobs;
 
-SELECT c.MGR_ID, c.employee_id, c.MGR_NAME, c.job_id, jobs.job_title
+SELECT c.MGR_ID, c.MGR_NAME, c.employee_id, c.NAME, c.job_id, jobs.job_title
 FROM(SELECT b.manager_id as MGR_ID, a.first_name || a.last_name as MGR_NAME, b.employee_id, b.first_name || b.last_name as NAME, b.job_id
      FROM employees a, employees b
      WHERE a.employee_id = b.manager_id
