@@ -357,3 +357,6 @@ SELECT sido, sigungu, count(*)
 FROM FASTFOOD
 WHERE gb = '·Ôµ¥¸®¾Æ'
 GROUP BY sido, sigungu;
+
+SELECT *
+FROM fastfood;
