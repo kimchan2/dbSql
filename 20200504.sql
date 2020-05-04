@@ -286,8 +286,6 @@ ORDER BY num DESC);
 
 
 
-SELECT *
-FROM tax;
 
 --필수
 과제1] fastfood 테이블과 tax 테이블을 이용하여 다음과 같이 조회되도록 SQL 작성
@@ -297,8 +295,65 @@ FROM tax;
  
 순위, 햄버거 시도, 햄버거 시군구, 햄버거 도시발전지수, 국세청 시도, 국세청 시군구, 국세청 연말정산 금액1인당 신고액
 
+SELECT *
+FROM tax;
+
+SELECT ROWNUM tax_rank, sido tax_sido, sigungu tax_sigungu, tax_jisu  -- 국세청 순위
+FROM (SELECT sido, sigungu, people, sal, ROUND(sal/people, 2) tax_jisu
+      FROM tax
+      ORDER BY tax_jisu DESC);
+
+
+SELECT ham_rank as rank, ham_sido, ham_sigungu, ham_jisu, tax_sido, tax_sigungu, tax_jisu
+FROM (SELECT ROWNUM ham_rank, SIDO ham_sido, SIGUNGU ham_sigungu, ham_jisu
+      FROM (SELECT SIDO, SIGUNGU, ROUND((beg+mac+kfc)/(CASE
+                                                       WHEN lot = 0 THEN 1
+                                                       WHEN lot > 0 THEN lot
+                                                       END), 2) ham_jisu
+            FROM(SELECT SIDO, SIGUNGU, COUNT(CASE
+                                             WHEN GB = '롯데리아' Then 1
+                                             END) lot, COUNT(CASE
+                                                             WHEN GB = '버거킹' Then 1
+                                                             END) beg, COUNT(CASE
+                                                                             WHEN GB = '맥도날드' Then 1
+                                                                             END) mac, COUNT(CASE
+                                                                                             WHEN GB = 'KFC' Then 1
+                                                                                             END) kfc
+                 FROM FASTFOOD  
+                 GROUP BY SIDO, SIGUNGU)
+                 ORDER BY ham_jisu DESC)) ham
+
+, (SELECT ROWNUM tax_rank, sido tax_sido, sigungu tax_sigungu, tax_jisu 
+   FROM (SELECT sido, sigungu, people, sal, ROUND(sal/people, 2) tax_jisu
+         FROM tax
+         ORDER BY tax_jisu DESC)) tax
+WHERE ham.ham_rank = tax.tax_rank;
+
+
 --옵션
 과제2] 햄버거 도시발전 지수를 구하기 위해 4개의 인라인 뷰를 사용 하였는데 (fastfood 테이블을 4번 사용)
 이를 개선하여 테이블을 한번만 읽는 형태로 쿼리를 개선 (fastfood 테이블을 1번만 사용), CASE나 DECODE 이용
 
+SELECT ROWNUM rank, SIDO, SIGUNGU, jisu
+FROM (SELECT SIDO, SIGUNGU, ROUND((beg+mac+kfc)/(CASE
+                                                 WHEN lot = 0 THEN 1
+                                                 WHEN lot > 0 THEN lot
+                                                 END), 2) jisu
+      FROM(SELECT SIDO, SIGUNGU, COUNT(CASE
+                                       WHEN GB = '롯데리아' Then 1
+                                       END) lot, COUNT(CASE
+                                                       WHEN GB = '버거킹' Then 1
+                                                       END) beg, COUNT(CASE
+                                                                       WHEN GB = '맥도날드' Then 1
+                                                                       END) mac, COUNT(CASE
+                                                                                       WHEN GB = 'KFC' Then 1
+                                                                                       END) kfc
+          FROM FASTFOOD  
+          GROUP BY SIDO, SIGUNGU)
+      ORDER BY jisu DESC);
+      
 과제3] 햄버거 지수 sql을 다른형태로 도전하기
+SELECT sido, sigungu, count(*)
+FROM FASTFOOD
+WHERE gb = '롯데리아'
+GROUP BY sido, sigungu;
