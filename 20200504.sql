@@ -353,10 +353,55 @@ FROM (SELECT SIDO, SIGUNGU, ROUND((beg+mac+kfc)/(CASE
       ORDER BY jisu DESC);
       
 과제3] 햄버거 지수 sql을 다른형태로 도전하기
-SELECT sido, sigungu, count(*)
-FROM FASTFOOD
-WHERE gb = '롯데리아'
-GROUP BY sido, sigungu;
-
+-- 원래 테이블을 시도 시군구로 그룹지은 다음 롯데리아, 맥도날드, 버거킹, KFC와 아우터조인 적용, NULL은 0처리
 SELECT *
 FROM fastfood;
+
+SELECT origin.sido, origin.sigungu,
+       NVL(lot_num, 0) as lot_num,
+       NVL(beg_num, 0) as beg_num,
+       NVL(mac_num, 0) as mac_num,
+       NVL(kfc_num, 0) as kfc_num,
+       ROUND( ( (NVL(beg_num, 0) + NVL(mac_num, 0) + NVL(kfc_num, 0)) / NVL(lot_num, 1) ), 2 ) as ham_jisu
+FROM(SELECT sido, sigungu
+     FROM fastfood
+     GROUP BY sido, sigungu) origin, (SELECT sido, sigungu, count(*) lot_num
+                                      FROM FASTFOOD
+                                      WHERE gb = '롯데리아'
+                                      GROUP BY sido, sigungu) lot, (SELECT sido, sigungu, count(*) beg_num
+                                                                    FROM FASTFOOD
+                                                                    WHERE gb = '버거킹'
+                                                                    GROUP BY sido, sigungu) beg, (SELECT sido, sigungu, count(*) mac_num
+                                                                                                  FROM FASTFOOD
+                                                                                                  WHERE gb = '맥도날드'
+                                                                                                  GROUP BY sido, sigungu) mac, (SELECT sido, sigungu, count(*) kfc_num
+                                                                                                                                FROM FASTFOOD
+                                                                                                                                WHERE gb = 'KFC'
+                                                                                                                                GROUP BY sido, sigungu) kfc
+WHERE origin.sido = lot.sido(+) AND origin.sido = beg.sido(+) AND origin.sido = mac.sido(+) AND origin.sido = kfc.sido(+)
+  AND origin.sigungu = lot.sigungu(+) AND origin.sigungu = beg.sigungu(+) AND origin.sigungu = mac.sigungu(+) AND origin.sigungu = kfc.sigungu(+)
+ORDER BY ham_jisu DESC;
+
+SELECT sido, sigungu, count(*) mac
+FROM FASTFOOD
+WHERE gb = '맥도날드'
+GROUP BY sido, sigungu;
+
+
+SELECT * /* lot.sido as sido, lot.sigungu as sigungu, lot_num, mac_num, beg_num, kfc_num */
+FROM
+(SELECT sido, sigungu, count(*) lot_num
+ FROM FASTFOOD
+ WHERE gb = '롯데리아'
+ GROUP BY sido, sigungu) lot, (SELECT sido, sigungu, count(*) mac_num
+                               FROM FASTFOOD
+                               WHERE gb = '맥도날드'
+                               GROUP BY sido, sigungu) mac, (SELECT sido, sigungu, count(*) beg_num
+                                                             FROM FASTFOOD
+                                                             WHERE gb = '버거킹'
+                                                             GROUP BY sido, sigungu) beg, (SELECT sido, sigungu, count(*) kfc_num
+                                                                                           FROM FASTFOOD
+                                                                                           WHERE gb = 'KFC'
+                                                                                           GROUP BY sido, sigungu) kfc
+WHERE lot.sido = mac.sido(+) AND lot.sido = beg.sido(+) AND lot.sido = kfc.sido
+  AND lot.sigungu = mac.sigungu(+) AND lot.sigungu = beg.sigungu(+) AND lot.sigungu = kfc.sigungu(+);
