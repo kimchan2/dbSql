@@ -369,7 +369,7 @@ ROLLBACK;
 
 SELECT *
 FROM emp_test;
-
+ 
 DDL은 자동 커밋이기 때문에 DML 문장에도 영향을 받는다
 DDL을 실행할 때에는 주의깊게 이전에 했던 작업을 살펴볼 필요가 있다
 SQLD 시험에도 잘나오는 문제
