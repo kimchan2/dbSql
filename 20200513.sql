@@ -71,6 +71,52 @@ FROM TABLE(DBMS_XPLAN.DISPLAY);
 
 idx4] 해보기
 
+SELECT *
+FROM emp
+WHERE empno = :empno;
+
+SELECT *
+FROM emp, dept
+WHERE emp.deptno = dept.deptno;
+  AND emp.deptno = :deptno;
+  AND emp.empno LIKE :empno || '%';
+  
+SELECT *
+FROM dept
+WHERE deptno = :deptno;
+
+SELECT *
+FROM emp
+WHERE sal BETWEEN :st_sal AND :ed_sal
+  AND deptno = :deptno;
+
+EXPLAIN PLAN FOR  
+SELECT *
+FROM emp, dept
+WHERE emp.deptno = dept.deptno
+  AND emp.deptno = :deptno
+  AND dept.loc = :loc;
+  
+SELECT *
+FROM TABLE(DBMS_XPLAN.DISPLAY);
+
+SELECT *
+FROM dept;
+  
+1] empno(=) x
+2] deptno(=), empno(LIKE :empno || '%') x
+3] deptno(=) x
+4] deptno(=), sal(BETWEEN) x
+5] deptno(=), loc(=)
+
+CREATE UNIQUE INDEX idx_u_emp_01 ON emp ( empno, deptno );
+CREATE INDEX idx_emp_02 ON emp ( deptno, sal );
+
+
+DROP INDEX idx_u_emp_01;
+DROP INDEX idx_emp_02;
+
+
 
 실행계획
 
@@ -91,7 +137,7 @@ self join : 같은 테이블끼리 조인 하는 형태
 Online Transaction Processing (OLTP) : 실시간 처리 ==> 응답이 빨라야 하는 시스템 (일반적인 웹 서비스)
 Online Analysis Processing (OLAP) : 일괄처리 ==> 전체 처리속도가 중요한 경우(은행 이자 계산, 새벽 한 번에 계산)
 
-SELECT * FROM USER_INDEXES WHERE TABLE_NAME = 'EMP';
+SELECT * FROM USER_INDEXES WHERE TABLE_NAME = 'DEPT';
 
 
 
