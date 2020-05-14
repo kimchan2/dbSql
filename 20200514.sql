@@ -301,4 +301,10 @@ UNION ALL
 SELECT null, null, SUM(sal) sal
 FROM emp;
 
+SELECT job, deptno, SUM(sal) sal
+FROM emp
+GROUP BY ROLLUP (job, deptno);
+
 서브그룹의 개수는 : ROLLUP 절에 기술한 컬럼 개수 + 1;
+
+
